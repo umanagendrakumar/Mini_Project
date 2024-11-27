@@ -2,11 +2,26 @@
 
 include 'connection.php';
 
+// Initialize variables
+$error = "";
+
 // Handle registration form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $rollno = strtoupper(trim($_POST['rollno'])); // Get roll number and convert to uppercase
     $password = trim($_POST['password']); // Get password
 
+
+    // Check if the roll number already exists
+    $checkQuery = "SELECT * FROM student_info WHERE rollno = ?";
+    $checkStmt = $conn->prepare($checkQuery);
+    $checkStmt->bind_param("s", $rollno);
+    $checkStmt->execute();
+    $checkResult = $checkStmt->get_result();
+    
+    if ($checkResult->num_rows > 0) {
+        // Roll number already exists, display error message
+        $error = "An account already exists for this roll number.";
+    } else {
     // Hash the password using password_hash()
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
@@ -27,6 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Close statement
     $stmt->close();
+}
 }
 
 // Close connection
@@ -141,7 +157,7 @@ $conn->close();
         <form action="register.php" method="POST" class="select-container">
             <!-- Academic Year Dropdown -->
             <label for="academicYear">Academic Year:</label>
-            <select id="academicYear" onchange="handleAcademicYearChange()">
+            <select id="academicYear" onchange="handleAcademicYearChange()" required>
                 <option value="">Select Academic Year</option>
                 <option value="2021-2025">2021-2025</option>
                 <option value="2022-2026">2022-2026</option>
@@ -151,30 +167,33 @@ $conn->close();
 
             <!-- Branch Dropdown -->
             <label for="branch">Branch:</label>
-            <select id="branch" onchange="handleBranchChange()" disabled>
+            <select id="branch" onchange="handleBranchChange()" required disabled>
                 <option value="">Select Branch</option>
             </select>
 
             <!-- Rollno Dropdown -->
             <label for="rollno">Rollno:</label>
-            <select id="rollno" name="rollno" onchange="handleRollNoChange()" disabled>
+            <select id="rollno" name="rollno" onchange="handleRollNoChange()" required disabled>
                 <option value="" >Select Rollno</option>
             </select>
 
             <!-- Password Input -->
             <label for="password">Password:</label>
-            <input type="password" id="password" placeholder="Enter Password"  disabled>
+            <input type="password" id="password" placeholder="Enter Password" required disabled>
 
             <!-- Confirm Password Input -->
             <label for="confirmPassword">Confirm Password:</label>
-            <input type="password" id="confirmPassword" placeholder="Confirm Password" name="password" disabled>
+            <input type="password" id="confirmPassword" placeholder="Confirm Password" name="password" required disabled>
 
-            <!-- <div id="passwordError" class="error">Password does not match.</div>
-            <div id="passwordLengthError" class="error">Password length must be between 8 and 20 characters.</div> -->
-            <button id="submitButton" name="register">Register</button>
+            <div id="passwordError" class="error">Password does not match.</div>
+            <div id="passwordLengthError" class="error">Password length must be minimum of 6 characters.</div>
+
+            <!-- Submit Button -->
+            <button id="submitButton" name="register" disabled>Register</button>
     </form>
+    <p style="color:red;"><?php echo $error; ?></p> <!-- Display error message if any -->
 
-        <!-- Submit Button -->
+
     </div>
 
     <script>
@@ -260,40 +279,38 @@ $conn->close();
                 document.getElementById("confirmPassword").disabled = true;
             }
 
-            // checkPasswordMatch();
+            checkPasswordMatch();
         }
 
-        // function checkPasswordMatch() {
-        //     const password = document.getElementById("password").value;
-        //     const confirmPassword = document.getElementById("confirmPassword").value;
-        //     const passwordError = document.getElementById("passwordError");
-        //     const passwordLengthError = document.getElementById("passwordLengthError");
-        //     const submitButton = document.getElementById("submitButton");
+        function checkPasswordMatch() {
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            const passwordError = document.getElementById("passwordError");
+            const passwordLengthError = document.getElementById("passwordLengthError");
+            const submitButton = document.getElementById("submitButton");
 
-        //     passwordError.style.display = "none";
-        //     passwordLengthError.style.display = "none";
+            passwordError.style.display = "none";
+            passwordLengthError.style.display = "none";
 
-        //     let validPassword = true;
+            let validPassword = true;
 
-        //     if (password.length < 8 || password.length > 20) {
-        //         passwordLengthError.style.display = "block";
-        //         validPassword = false;
-        //     }
+            if (password.length < 6) {
+                passwordLengthError.style.display = "block";
+                validPassword = false;
+            }
 
-        //     if (password !== confirmPassword && confirmPassword !== "") {
-        //         passwordError.style.display = "block";
-        //         validPassword = false;
-        //     }
+            if (password !== confirmPassword && confirmPassword !== "") {
+                passwordError.style.display = "block";
+                validPassword = false;
+            }
 
-        //     submitButton.disabled = !validPassword || !confirmPassword || password !== confirmPassword || password.length < 8 || password.length > 20;
-        // }
+            submitButton.disabled = !validPassword || !confirmPassword || password !== confirmPassword || password.length < 6;
+        }
 
-        // document.getElementById("confirmPassword").addEventListener("input", checkPasswordMatch);
-        // document.getElementById("password").addEventListener("input", checkPasswordMatch);
+        document.getElementById("confirmPassword").addEventListener("input", checkPasswordMatch);
+        document.getElementById("password").addEventListener("input", checkPasswordMatch);
 
-        // function handleSubmit() {
-        //     alert("Navigating to Dashboard");
-        // }
+       
     </script>
 
 </body>
