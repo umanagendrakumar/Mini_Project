@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SPA Home Page</title>
     <style>
         /* Reset and basic styling */
@@ -19,11 +18,13 @@
             align-items: center;
             min-height: 100vh;
             font-family: Arial, sans-serif;
-            background-color: white;
-            /* Black background */
+            background: linear-gradient(
+                to right,
+                rgba(255, 0, 0, 0.8),
+                rgba(0, 0, 255, 0.8)
+            );
             color: gold;
             max-height: 100vh;
-            /* Gold text color */
         }
 
         /* Container styling */
@@ -37,13 +38,12 @@
         }
 
         h2 {
-            color: rgb(127, 172, 211);
+            color: rgb(156, 191, 222);
         }
 
         .button-group {
             display: flex;
             flex-direction: column;
-
             margin: 20px;
         }
 
@@ -51,28 +51,42 @@
         .button-group button {
             display: inline-block;
             padding: 15px 30px;
-
             margin: 10px;
             font-size: 18px;
             color: black;
-            background-color: rgb(247, 246, 246);
-            /* Black glassy effect */
-            border: 2px solid rgb(0, 0, 0);
-            border-radius: 10px;
+            background-color: transparent;
+            border: 1px solid rgb(22, 22, 22);
+            border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.3s ease;
             font-weight: bold;
             backdrop-filter: blur(5px);
         }
 
+        .button-group button:active {
+            transform: scale(0.98);
+        }
         .button-group button:hover {
-            background-color: rgba(150, 147, 147, 0.8);
-            transform: scale(1.05);
+            background-color: rgb(89, 79, 79);
         }
 
         .button-group button:nth-child(2) {
             padding: 0px;
             border: 1px dotted rgb(0, 0, 0);
+        }
+
+        .scrolling-text {
+           color: rgba(255, 255, 255, 0.435);
+        }
+
+        /* Fading effect */
+        .fade {
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .visible {
+            opacity: 1;
         }
     </style>
 </head>
@@ -83,18 +97,63 @@
         <h2>Student Performance Analysis</h2>
 
         <div class="button-group">
-            <button onclick="location.href='inputsForDashboard.html'">Student Dashboard</button>
+            <button style="text-align: center;">
+                Student <span class="scrolling-text" id="dynamicText"></span>
+            </button>
             <button></button>
-            <button onclick="location.href='semSelection.html'">Evaluate SGPA</button>
-            <button onclick="location.href='addToDb.html'">Add SGPA's To Database</button>
+            <button onclick="location.href='semSelection.html'">
+                Evaluate SGPA
+            </button>
+            <button onclick="location.href='addToDb.html'">
+                Add SGPA's To Database
+            </button>
         </div>
     </div>
 
     <script>
-        function dashboard() {
-            alert('Student Dashboard is not implemented');
+        let isDashboard = true;
+const dynamicText = document.getElementById("dynamicText");
+
+function typeText(text, callback) {
+    dynamicText.textContent = ""; // Clear existing text
+    let index = 0;
+
+    const typingInterval = setInterval(() => {
+        if (index < text.length) {
+            dynamicText.textContent += text.charAt(index); // Add next character
+            index++;
+        } else {
+            clearInterval(typingInterval); // Stop typing
+            setTimeout(callback, 1000); // Wait before starting to delete
         }
+    }, 100); // Typing speed
+}
+
+function deleteText(callback) {
+    let index = dynamicText.textContent.length;
+
+    const deletingInterval = setInterval(() => {
+        if (index > 0) {
+            dynamicText.textContent = dynamicText.textContent.slice(0, index - 1); // Remove last character
+            index--;
+        } else {
+            clearInterval(deletingInterval); // Stop deleting
+            callback(); // Start typing the next text
+        }
+    }, 100); // Deleting speed
+}
+
+function toggleText() {
+    const nextText = isDashboard ? "Analysis" : "Dashboard";
+    isDashboard = !isDashboard;
+
+    typeText(nextText, () => {
+        deleteText(toggleText); // After typing, delete and toggle
+    });
+}
+
+// Start the typing effect for the first text
+toggleText();
     </script>
 </body>
-
 </html>
