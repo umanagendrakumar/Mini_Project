@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPA Home Page</title>
+    <style>
+        /* Reset and basic styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: white;
+            /* Black background */
+            color: gold;
+            max-height: 100vh;
+            /* Gold text color */
+        }
+
+        /* Container styling */
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: black;
+        }
+
+        h2 {
+            color: rgb(127, 172, 211);
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+
+            margin: 20px;
+        }
+
+        /* Button styling */
+        .button-group button {
+            display: inline-block;
+            padding: 15px 30px;
+
+            margin: 10px;
+            font-size: 18px;
+            color: black;
+            background-color: rgb(247, 246, 246);
+            /* Black glassy effect */
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            font-weight: bold;
+            backdrop-filter: blur(5px);
+        }
+
+        .button-group button:hover {
+            background-color: rgba(150, 147, 147, 0.8);
+            transform: scale(1.05);
+        }
+
+        .button-group button:nth-child(2) {
+            padding: 0px;
+            border: 1px dotted rgb(0, 0, 0);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Welcome to SPA</h1>
+        <h2>Student Performance Analysis</h2>
+
+        <div class="button-group">
+            <button onclick="location.href='inputsForDashboard.html'">Student Dashboard</button>
+            <button></button>
+            <button onclick="location.href='semSelection.html'">Evaluate SGPA</button>
+            <button onclick="location.href='addToDb.html'">Add SGPA's To Database</button>
+        </div>
+    </div>
+
+    <script>
+        function dashboard() {
+            alert('Student Dashboard is not implemented');
+        }
+    </script>
+</body>
+
+</html>
